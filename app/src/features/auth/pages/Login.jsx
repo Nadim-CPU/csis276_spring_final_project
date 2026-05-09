@@ -20,10 +20,10 @@ const Login = () => {
         try {
             const { ok, data } = await login(form);
             if (ok && data.authenticated) {
-                signIn(data.user);
-                navigate('/');
+                signIn({ user: data.user, accessToken: data.access_token });
+                navigate('/dashboard');
             } else {
-                setError(data?.message || 'Login failed.');
+                setError((data && data.message) || 'Login failed.');
             }
         } catch {
             setError('Network error. Please try again.');
@@ -34,7 +34,7 @@ const Login = () => {
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center">
-            <Paper sx={{ p: 3, maxWidth: 480, minWidth: 450 }}>
+            <Paper sx={{ p: 3, width: 450 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
                     Login
                 </Typography>
@@ -65,6 +65,7 @@ const Login = () => {
                         {loading ? <CircularProgress size={24} /> : 'Login'}
                     </Button>
 
+                    
                     <Typography variant="body2">
                         Don't have an account?{' '}
                         <Link component={RouterLink} to="/register">

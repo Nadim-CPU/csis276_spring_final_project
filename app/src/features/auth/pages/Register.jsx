@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { Alert, Button, CircularProgress, Link, MenuItem, Paper, Stack, TextField, Typography, Box } from '@mui/material';
+import { Alert, Button, CircularProgress, Link, Paper, Stack, TextField, Typography, Box } from '@mui/material';
 import { register } from '../services/auth.service';
-import { useAuth } from '../../../store/hooks/useAuth';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -18,7 +17,6 @@ const Register = () => {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { signIn } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,18 +24,17 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (form.password.length < 6) {
-            setError('Password must be at least 6 characters.');
+        if (form.password.length < 8) {
+            setError('Password must be at least 8 characters.');
             return;
         }
         setLoading(true);
         try {
             const { ok, data } = await register(form);
             if (ok) {
-                signIn(data);
-                navigate('/');
+                navigate('/login');
             } else {
-                setError(data?.message || 'Registration failed.');
+                setError((data && data.message) || 'Registration failed.');
             }
         } catch {
             setError('Network error. Please try again.');
@@ -48,7 +45,7 @@ const Register = () => {
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center">
-            <Paper sx={{ p: 3, maxWidth: 480, minWidth: 450 }}>
+            <Paper sx={{ p: 3, width: 450 }}>
                 <Typography variant="h5" sx={{ mb: 2 }}>
                     Register
                 </Typography>

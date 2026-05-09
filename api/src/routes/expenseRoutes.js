@@ -4,7 +4,8 @@ const { expenseCreateRules, expenseUpdateRules } = require('../validators/expens
 
 const router = Router();
 
-router.get('/', ExpenseController.getAllOfUser);
+router.get('/', ExpenseController.getExpenses);
+router.get('/:id', ExpenseController.getExpense);
 router.post('/', expenseCreateRules, ExpenseController.create);
 router.put('/:id', expenseUpdateRules, ExpenseController.update);
 router.delete('/:id', ExpenseController.remove);

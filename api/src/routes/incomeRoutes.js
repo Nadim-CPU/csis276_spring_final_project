@@ -4,7 +4,8 @@ const { incomeRules } = require('../validators/incomeValidators')
 
 const router = Router();
 
-router.get('/:id', IncomeController.getAllOfUser);
+router.get('/', IncomeController.getIncomes);
+router.get('/:id', IncomeController.getIncome);
 router.post('/', incomeRules, IncomeController.create);
 router.put('/:id', incomeRules, IncomeController.update);
 router.delete('/:id', IncomeController.remove);

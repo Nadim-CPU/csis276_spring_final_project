@@ -4,8 +4,8 @@ class AuthController {
     
     static async register(req, res, next) {
         try {
-            const client = await AuthService.register(req.body);
-            return res.status(201).json(client);
+            const user = await AuthService.register(req.body);
+            return res.status(201).json(user);
         } catch (e) {
             next(e);
         }
@@ -13,8 +13,8 @@ class AuthController {
 
     static async login(req, res, next) {
         try {
-            const client = await AuthService.register(req.body);
-            return res.json({ authenticated: true, client});
+            const user = await AuthService.login(req.body);
+            return res.json({ authenticated: true, user });
         } catch(e) {
             next(e);
         }

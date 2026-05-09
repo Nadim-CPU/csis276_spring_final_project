@@ -11,7 +11,15 @@ class CategoryRepository {
         return result.rows;
     }
 
-    static async create(user_id, category_name, type) {
+    static async getCategory(category_id) {
+        const result = await pool.query(
+            'SELECT * FROM categories WHERE category_id = $1',
+            [category_id]
+        );
+        return result.rows[0] || null;
+    }
+
+    static async create({ user_id, category_name, type }) {
         const result = await pool.query(
             `INSERT INTO categories (user_category_id, category_name, type)
             VALUES ($1, $2, $3)
@@ -22,14 +30,13 @@ class CategoryRepository {
         return result.rows[0];
     }
 
-    static async update(category_id, category_name, type) {
+    static async update(category_id, { category_name }) {
         const result = await pool.query(
             `UPDATE categories
-            SET category_name = $1,
-            type = $2
-            WHERE category_id = $3
+            SET category_name = $1
+            WHERE category_id = $2
             RETURNING *`,
-            [category_name, type, category_id]
+            [category_name, category_id]
         );
 
         return result.rows[0];

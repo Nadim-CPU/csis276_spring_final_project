@@ -1,17 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const loadUserFromStorage = () => {
+const loadFromStorage = (key) => {
     try {
-        const stored = localStorage.getItem('user');
-        console.log(localStorage.getItem('user'));
-        return stored ? JSON.parse(stored) : null;
+        const stored = localStorage.getItem(key);
+        if (!stored) return null;
+        try {
+            return JSON.parse(stored);
+        } catch {
+            return stored;
+        }
     } catch {
         return null;
     }
 };
 
 const initialState = {
-    user: loadUserFromStorage(),
+    user: loadFromStorage('user'),
+    accessToken: loadFromStorage('accessToken'),
 };
 
 const authSlice = createSlice({
@@ -19,10 +24,12 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         signIn: (state, action) => {
-            state.user = action.payload;
+            state.user = action.payload.user;
+            state.accessToken = action.payload.accessToken;
         },
         signOut: (state) => {
             state.user = null;
+            state.accessToken = null;
         },
     },
 });

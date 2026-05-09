@@ -1,0 +1,169 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  user_id: Int!
+  user_first_name: String!
+  user_last_name: String!
+  user_email: String!
+  user_dob: String!
+}
+
+type Account {
+  account_id: Int!
+  user_account_id: Int!
+  account_name: String!
+  account_type: String!
+  account_balance: Int!
+}
+
+type OperationResult {
+  success: Boolean!
+  message: String
+}
+
+type AuthPayload {
+  authenticated: Boolean!
+  user: User!
+  access_token: String!
+}
+
+type Category {
+  category_id: Int!
+  user_category_id: Int!
+  category_name: String!
+  type: Boolean!
+}
+
+type Expense {
+  expense_id: Int!
+  user_expense_id: Int!
+  expense_amount: Int!
+  expense_source: String!
+  expense_date: String!
+  category_expense_id: Int!
+  account_expense_id: Int!
+  category: Category!
+  account: Account!
+}
+
+type Income {
+  income_id: Int!
+  user_income_id: Int!
+  income_amount: Int!
+  income_source: String!
+  income_date: String!
+  category_income_id: Int!
+  account_income_id: Int!
+  category: Category!
+  account: Account!
+}
+
+type Query {
+  users: [User!]!
+  user(id: Int!): User!
+  accounts(user_id: Int!): [Account!]!
+  account(id: Int!): Account!
+  categories(user_id: Int!): [Category!]!
+  category(id: Int!): Category!
+  expenses(user_id: Int!): [Expense!]!
+  expense(id: Int!): Expense!
+  incomes(user_id: Int!): [Income!]!
+  income(id: Int!): Income!
+}
+
+type Mutation {
+  updateUser(id: Int!, input: UpdateUserInput!): User!
+  removeUser(id: Int!): OperationResult!
+  register(input: RegisterInput!): User!
+  login(input: LoginInput!): AuthPayload!
+  createAccount(input: CreateAccountInput!): Account!
+  updateAccount(id: Int!, input: UpdateAccountInput!): Account!
+  removeAccount(id: Int!): OperationResult!
+  createCategory(input: CreateCategoryInput!): Category!
+  updateCategory(id: Int!, input: UpdateCategoryInput!): Category!
+  removeCategory(id: Int!): OperationResult!
+  createExpense(input: CreateExpenseInput!): Expense!
+  updateExpense(id: Int!, input: UpdateExpenseInput!): Expense!
+  removeExpense(id: Int!): OperationResult!
+  createIncome(input: CreateIncomeInput!): Income!
+  updateIncome(id: Int!, input: UpdateIncomeInput!): Income!
+  removeIncome(id: Int!): OperationResult!
+}
+
+input UpdateUserInput {
+  user_first_name: String!
+  user_last_name: String!
+  user_email: String!
+}
+
+input RegisterInput {
+  user_first_name: String!
+  user_last_name: String!
+  user_email: String!
+  password: String!
+  user_dob: String!
+}
+
+input LoginInput {
+  user_email: String!
+  password: String!
+}
+
+input CreateAccountInput {
+  user_id: Int!
+  account_name: String!
+  account_type: String!
+  account_balance: Int!
+}
+
+input UpdateAccountInput {
+  account_name: String!
+  account_type: String!
+  account_balance: Int!
+}
+
+input CreateCategoryInput {
+  user_id: Int!
+  category_name: String!
+  type: Boolean!
+}
+
+input UpdateCategoryInput {
+  category_name: String!
+}
+
+input CreateExpenseInput {
+  user_id: Int!
+  expense_amount: Int!
+  expense_source: String!
+  expense_date: String!
+  category_expense_id: Int!
+  account_expense_id: Int!
+}
+
+input UpdateExpenseInput {
+  expense_amount: Int!
+  expense_source: String!
+  expense_date: String!
+  category_expense_id: Int!
+  account_expense_id: Int!
+}
+
+input CreateIncomeInput {
+  user_id: Int!
+  income_amount: Float!
+  income_source: String!
+  income_date: String!
+  category_income_id: Int!
+  account_income_id: Int!
+}
+
+input UpdateIncomeInput {
+  income_amount: Float!
+  income_source: String!
+  income_date: String!
+  category_income_id: Int!
+  account_income_id: Int!
+}

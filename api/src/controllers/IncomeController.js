@@ -3,10 +3,19 @@ const IncomeService = require('../services/IncomeService')
 
 class IncomeController {
 
-    static async getAllOfUser(req, res, next) {
+    static async getIncomes(req, res, next) {
         try {
-            const incomes = await IncomeService.getAllOfUser(req.params.id);
+            const incomes = await IncomeService.getIncomes(req.query.user_id);
             return res.status(201).json(incomes);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async getIncome(req, res, next) {
+        try {
+            const income = await IncomeService.getIncome(req.params.id);
+            return res.status(201).json(income);
         } catch (e) {
             next(e);
         }

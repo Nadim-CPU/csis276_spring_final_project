@@ -12,6 +12,14 @@ class CategoryService {
         return await CategoryRepository.getCategories(user_id);
     }
 
+    static async getCategory(category_id) {
+        const category = await CategoryRepository.getCategory(category_id);
+        if (!category) {
+            throw APIError.notFound(`Category ID ${category_id} is non-existent!`);
+        }
+        return category;
+    }
+
     static async create(data) {
         const doesIDExist = await UserRepository.findByID(data.user_id);
         if (!doesIDExist) {

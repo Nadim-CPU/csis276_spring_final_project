@@ -1,16 +1,16 @@
 const APIError = require('./APIError');
 
 // eslint-disable-next-line no-unused-vars
-const errorHandler = (err, req, res, next) => {
-    if (err instanceof APIError) {
-        return res.status(err.statusCode).json({
-            code: err.code,
-            message: err.message,
-            details: err.details,
+const errorHandler = (e, req, res, next) => {
+    if (e instanceof APIError) {
+        return res.status(e.statusCode).json({
+            code: e.code,
+            message: e.message,
+            details: e.details,
         });
     }
 
-    console.error(err);
+    console.error(e);
     return res.status(500).json({
         code: 'INTERNAL_ERROR',
         message: 'An unexpected error occurred',
