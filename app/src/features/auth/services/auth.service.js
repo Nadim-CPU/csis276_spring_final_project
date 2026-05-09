@@ -23,7 +23,37 @@ export const login = ({ user_email, password }) => {
     );
 };
 
-export const register = ({ user_first_name, user_last_name, user_email, user_dob, password }) => {
+export const loginWithFace = ({ user_email, descriptor }) => {
+    return requestGraphql(
+        `mutation LoginWithFace($input: LoginWithFaceInput!) {
+            loginWithFace(input: $input) {
+                authenticated
+                access_token
+                user {
+                    user_id
+                    user_first_name
+                    user_last_name
+                    user_email
+                    user_dob
+                }
+            }
+        }`,
+        {
+            variables: { input: { user_email, descriptor } },
+            includeMeta: true,
+            dataPath: 'loginWithFace',
+        },
+    );
+};
+
+export const register = ({
+    user_first_name,
+    user_last_name,
+    user_email,
+    user_dob,
+    password,
+    face_descriptor,
+}) => {
     return requestGraphql(
         `mutation Register($input: RegisterInput!) {
             register(input: $input) {
@@ -36,7 +66,14 @@ export const register = ({ user_first_name, user_last_name, user_email, user_dob
         }`,
         {
             variables: {
-                input: { user_first_name, user_last_name, user_email, user_dob, password },
+                input: {
+                    user_first_name,
+                    user_last_name,
+                    user_email,
+                    user_dob,
+                    password,
+                    face_descriptor,
+                },
             },
             includeMeta: true,
             dataPath: 'register',

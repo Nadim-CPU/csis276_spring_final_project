@@ -1,5 +1,15 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsDateString, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { Field, Float, InputType } from '@nestjs/graphql';
+import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    IsArray,
+    IsDateString,
+    IsEmail,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    MinLength,
+} from 'class-validator';
 
 @InputType()
 export class RegisterInput {
@@ -22,4 +32,12 @@ export class RegisterInput {
     @Field()
     @IsDateString({}, { message: 'A valid date of birth is required' })
     user_dob!: string;
+
+    @Field(() => [Float], { nullable: true })
+    @IsOptional()
+    @IsArray()
+    @ArrayMinSize(128)
+    @ArrayMaxSize(128)
+    @IsNumber({}, { each: true })
+    face_descriptor?: number[];
 }

@@ -26,6 +26,9 @@ export class User {
 
     @Column()
     password_hash!: string;
+
+    @Column('double precision', { array: true, nullable: true })
+    face_descriptor?: number[] | null;
 }
 
 export type PublicUser = Omit<User, 'password_hash'>;

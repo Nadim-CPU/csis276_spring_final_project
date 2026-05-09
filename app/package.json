@@ -16,6 +16,7 @@
     "@mui/material": "^7.3.10",
     "@mui/x-date-pickers": "^9.0.0",
     "@reduxjs/toolkit": "^2.11.2",
+    "@vladmandic/face-api": "^1.7.15",
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.20",
     "moment": "^2.30.1",

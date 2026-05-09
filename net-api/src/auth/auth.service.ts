@@ -4,10 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
+import { LoginWithFaceInput } from './dto/login-with-face.input';
 import { LoginInput } from './dto/login.input';
 import { RegisterInput } from './dto/register.input';
 
 const SALT_ROUNDS = 10;
+const FACE_MATCH_THRESHOLD = 0.6;
 
 @Injectable()
 export class AuthService {
@@ -34,6 +36,7 @@ export class AuthService {
             user_email: dto.user_email,
             user_dob: dto.user_dob,
             password_hash,
+            face_descriptor: dto.face_descriptor ?? null,
         });
         return this.userRepository.save(user);
     }
@@ -49,7 +52,25 @@ export class AuthService {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const { password_hash: _ph, ...safeUser } = user;
+        return this.issueAuthPayload(user);
+    }
+
+    async loginWithFace(dto: LoginWithFaceInput) {
+        const user = await this.userRepository.findOneBy({ user_email: dto.user_email });
+        if (!user || !user.face_descriptor || user.face_descriptor.length !== 128) {
+            throw new UnauthorizedException('Face login is not set up for this account');
+        }
+
+        const distance = euclideanDistance(user.face_descriptor, dto.descriptor);
+        if (distance > FACE_MATCH_THRESHOLD) {
+            throw new UnauthorizedException('Face does not match');
+        }
+
+        return this.issueAuthPayload(user);
+    }
+
+    private issueAuthPayload(user: User) {
+        const { password_hash: _ph, face_descriptor: _fd, ...safeUser } = user;
         return {
             authenticated: true,
             user: safeUser,
@@ -59,4 +80,13 @@ export class AuthService {
             }),
         };
     }
+}
+
+function euclideanDistance(a: number[], b: number[]): number {
+    let sum = 0;
+    for (let i = 0; i < a.length; i++) {
+        const diff = a[i] - b[i];
+        sum += diff * diff;
+    }
+    return Math.sqrt(sum);
 }

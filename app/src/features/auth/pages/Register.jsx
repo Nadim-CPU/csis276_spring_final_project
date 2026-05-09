@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { Alert, Button, CircularProgress, Link, Paper, Stack, TextField, Typography, Box } from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Divider, Link, Paper, Stack, TextField, Typography } from '@mui/material';
 import { register } from '../services/auth.service';
+import FaceCapture from '../components/FaceCapture';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,6 +16,8 @@ const Register = () => {
         user_dob: '',
         password: '',
     });
+    const [faceDescriptor, setFaceDescriptor] = useState(null);
+    const [showCamera, setShowCamera] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -30,14 +33,14 @@ const Register = () => {
         }
         setLoading(true);
         try {
-            const { ok, data } = await register(form);
+            const { ok, data } = await register({ ...form, face_descriptor: faceDescriptor });
             if (ok) {
                 navigate('/login');
             } else {
                 setError((data && data.message) || 'Registration failed.');
             }
-        } catch {
-            setError('Network error. Please try again.');
+        } catch (err) {
+            setError(err.message || 'Network error. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -99,6 +102,40 @@ const Register = () => {
                         required
                         fullWidth
                     />
+
+                    <Divider>Face login (optional)</Divider>
+
+                    {!showCamera && !faceDescriptor && (
+                        <Button variant="outlined" onClick={() => setShowCamera(true)}>
+                            Set up face login
+                        </Button>
+                    )}
+
+                    {showCamera && !faceDescriptor && (
+                        <FaceCapture
+                            captureLabel="Capture face"
+                            onCapture={(descriptor) => {
+                                setFaceDescriptor(descriptor);
+                                setShowCamera(false);
+                            }}
+                        />
+                    )}
+
+                    {faceDescriptor && (
+                        <Alert severity="success">
+                            Face captured. You can use face login after registration.
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    setFaceDescriptor(null);
+                                    setShowCamera(true);
+                                }}
+                                sx={{ ml: 1 }}
+                            >
+                                Retake
+                            </Button>
+                        </Alert>
+                    )}
 
                     {error && <Alert severity="error">{error}</Alert>}
 
