@@ -1,11 +1,12 @@
-import { Field, Float, InputType, Int } from '@nestjs/graphql';
-import { IsDateString, IsInt, IsNotEmpty, IsNumber } from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsDateString, IsInt, IsNotEmpty, IsPositive } from 'class-validator';
 
 @InputType()
 export class CreateIncomeInput {
 
-    @Field(() => Float)
-    @IsNumber({}, { message: 'error with income amount!' })
+    @Field(() => Int)
+    @IsInt({ message: 'income amount must be a whole number' })
+    @IsPositive({ message: 'income amount must be greater than zero' })
     income_amount!: number;
 
     @Field()

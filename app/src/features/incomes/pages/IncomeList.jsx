@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Box, Button, Card, IconButton, Typography,
+    Alert, Box, Button, Card, IconButton, Snackbar, Typography,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -15,13 +15,18 @@ const IncomeList = () => {
     const { user } = useAuth();
     const { items: incomes, loadIncomes, deleteIncome } = useIncomes();
     const navigate = useNavigate();
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         loadIncomes(user.user_id);
     }, [user, loadIncomes]);
 
     const handleDelete = async (id) => {
-        await deleteIncome(id);
+        try {
+            await deleteIncome(id);
+        } catch (err) {
+            setErrorMsg(err?.message || "Failed to delete income.");
+        }
     }
 
     return (
@@ -94,6 +99,16 @@ const IncomeList = () => {
                     </Table>
                 </TableContainer>
             </Card>
+            <Snackbar
+                open={Boolean(errorMsg)}
+                autoHideDuration={5000}
+                onClose={() => setErrorMsg("")}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" variant="filled" onClose={() => setErrorMsg("")}>
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

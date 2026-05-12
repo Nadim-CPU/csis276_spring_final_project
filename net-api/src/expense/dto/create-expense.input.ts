@@ -1,11 +1,12 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsDateString, IsInt, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsPositive } from 'class-validator';
 
 @InputType()
 export class CreateExpenseInput {
 
     @Field(() => Int)
-    @IsNumber({}, { message: 'error with expense amount' })
+    @IsInt({ message: 'expense amount must be a whole number' })
+    @IsPositive({ message: 'expense amount must be greater than zero' })
     expense_amount!: number;
 
     @Field()

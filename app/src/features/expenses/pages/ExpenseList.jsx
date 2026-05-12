@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Box, Button, Card, IconButton, Typography,
+    Alert, Box, Button, Card, IconButton, Snackbar, Typography,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from "@mui/material";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -15,13 +15,18 @@ const ExpenseList = () => {
     const { user } = useAuth();
     const { items: expenses, loadExpenses, deleteExpense } = useExpenses();
     const navigate = useNavigate();
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         loadExpenses(user.user_id);
     }, [user, loadExpenses]);
 
     const handleDelete = async (id) => {
-        await deleteExpense(id);
+        try {
+            await deleteExpense(id);
+        } catch (err) {
+            setErrorMsg(err?.message || "Failed to delete expense.");
+        }
     }
 
     return (
@@ -94,6 +99,16 @@ const ExpenseList = () => {
                     </Table>
                 </TableContainer>
             </Card>
+            <Snackbar
+                open={Boolean(errorMsg)}
+                autoHideDuration={5000}
+                onClose={() => setErrorMsg("")}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" variant="filled" onClose={() => setErrorMsg("")}>
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

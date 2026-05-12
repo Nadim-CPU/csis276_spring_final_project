@@ -43,7 +43,6 @@ export const saveAccount = async (data, id) => {
                     input: {
                         account_name: data.account_name,
                         account_type: data.account_type,
-                        account_balance: Number(data.account_balance),
                     },
                 },
                 dataPath: 'updateAccount',

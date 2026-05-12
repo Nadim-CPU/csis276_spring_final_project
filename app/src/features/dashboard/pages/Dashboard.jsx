@@ -30,18 +30,9 @@ const Dashboard = () => {
     }, [user, loadExpenses, loadIncomes]);
 
     const data = useMemo(
-        () => (expenses.length || incomes.length ? buildDashboardData(expenses, incomes) : null),
+        () => buildDashboardData(expenses, incomes),
         [expenses, incomes],
     );
-
-    if (!data) {
-        return (
-            <Box>
-                <Typography variant="h4">Dashboard</Typography>
-                <Typography sx={{ mt: 2 }}>Loading...</Typography>
-            </Box>
-        );
-    }
 
     const monthLabel = `${MONTH_NAMES[data.currentMonth]} ${data.currentYear}`;
     const welcome = user && user.user_first_name ? `Welcome, ${user.user_first_name}.` : "Welcome.";

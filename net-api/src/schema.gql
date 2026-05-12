@@ -126,7 +126,6 @@ input CreateAccountInput {
 input UpdateAccountInput {
   account_name: String!
   account_type: String!
-  account_balance: Int!
 }
 
 input CreateCategoryInput {
@@ -155,7 +154,7 @@ input UpdateExpenseInput {
 }
 
 input CreateIncomeInput {
-  income_amount: Float!
+  income_amount: Int!
   income_source: String!
   income_date: String!
   category_income_id: Int!
@@ -163,7 +162,7 @@ input CreateIncomeInput {
 }
 
 input UpdateIncomeInput {
-  income_amount: Float!
+  income_amount: Int!
   income_source: String!
   income_date: String!
   category_income_id: Int!

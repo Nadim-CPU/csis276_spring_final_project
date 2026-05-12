@@ -31,7 +31,7 @@ JWT_SECRET=secret
 PORT=3001
 ```
 
-`app/.env` (optional — defaults assume the backend at `http://localhost:3001`):
+`app/.env` (defaults assume the backend at `http://localhost:3001`):
 
 ```dotenv
 VITE_API_URL=http://localhost:3001
@@ -41,9 +41,29 @@ VITE_SOCKET_URL=http://localhost:3001
 
 ## API Endpoints and Usage
 
-The backend is a **GraphQL** API. There is a single REST endpoint (`GET /` health-check) and one GraphQL endpoint (`POST /graphql`). All data operations go through GraphQL.
+The backend is a **GraphQL** API. All data operations go through GraphQL.
 
-Apollo Sandbox is auto-served at **`http://localhost:3001/graphql`** — it provides interactive, schema-driven documentation for every operation (the equivalent of a Swagger UI for GraphQL). For authenticated requests, paste your JWT into the Sandbox's headers tab as `Authorization: Bearer <token>`.
+Apollo Sandbox is served at **`http://localhost:3001/graphql`** For authenticated requests, paste your JWT into the Sandbox's headers tab as `Authorization: Bearer <token>`.
+
+### HOW TO USE APOLLO SANDBOX
+
+1. First run login from Sandbox to get an access_token:
+
+``` 
+    mutation {
+      login(input: { user_email: "you@example.com", password: "yourpass" }) {
+        access_token
+        user { user_id user_email }
+      }
+    }
+```
+2. Copy the access_token from the response.
+3. Click the Headers tab at the bottom of the Sandbox and add:
+``` 
+Header key: Authorization 
+Value: Bearer <paste-the-token-here>
+```
+Now you can run authenticated queries like me (user), accounts, expenses, etc.
 
 ### Queries (require JWT)
 
@@ -61,7 +81,7 @@ Apollo Sandbox is auto-served at **`http://localhost:3001/graphql`** — it prov
 
 ### Mutations
 
-**Auth (public — no JWT required)**
+**Auth (public and no JWT required)**
 
 | Operation | Args | Returns |
 | --------- | ---- | ------- |
@@ -189,7 +209,7 @@ All tables live in schema `cheque_me_db`.
 
 **NestJS + GraphQL (Apollo):** The backend framework and the GraphQL server it runs. NestJS gives us the module/service/resolver layering and dependency injection; `@nestjs/graphql` + `@nestjs/apollo` generate the GraphQL schema from the TypeScript classes (code-first) and serve Apollo Sandbox at `/graphql`. <br>
 **TypeORM + `pg`:** ORM that maps our Postgres tables to TypeScript entities and handles queries, eager-loading of relations, and atomic updates (`adjustBalance` uses `.increment()`). <br>
-**Passport-JWT + `@nestjs/jwt` + `bcryptjs`:** Auth pipeline — JWT tokens are signed at login and verified on every authenticated GraphQL request; bcrypt hashes passwords with 10 salt rounds. <br>
+**Passport-JWT + `@nestjs/jwt` + `bcryptjs`:** Auth pipeline: JWT tokens are signed at login and verified on every authenticated GraphQL request; bcrypt hashes passwords with 10 salt rounds. <br>
 **Socket.IO (`@nestjs/websockets` + `socket.io-client`):** Real-time event bus that pushes `account.changed` / `category.changed` / `expense.changed` / `income.changed` events to all connected clients so the UI stays in sync across tabs. <br>
 **Redux Toolkit + react-redux:** Frontend state management for auth, accounts, categories, expenses, and incomes; thunks wrap the GraphQL calls and slices upsert/delete locally. <br>
 **React Router 7:** Client-side routing with public / auth-only / protected route types in [`app/src/app/routes.js`](app/src/app/routes.js). <br>
@@ -205,7 +225,7 @@ All tables live in schema `cheque_me_db`.
 **Step 3:** Head to /categories and add your categories and its type (income, expense) to begin organizing your income and expense sources <br>
 **Step 4:** Head to either /incomes or /expenses and add your respective sources, along with their category and which account will be affected by it. You cannot create an income/expense source **UNTIL** an account and a category for whichever source you're adding is made. <br>
 **Step 5:** Check out your receipts and dashboard to see how they're visualized. <br>
-**Step 6:** Try out edge cases (e.g. delete a category that's in use, edit an expense to point at a different account — the account balances should rebalance automatically). <br>
+**Step 6:** Try out edge cases (e.g. delete a category that's in use, edit an expense to point at a different account and the account balances should rebalance automatically). <br>
 
 
 ## Technical Documentation
@@ -285,11 +305,11 @@ All tables live in schema `cheque_me_db`.
 | ---- | ------- |
 | [`GqlAuthGuard`](net-api/src/auth/guards/gql-auth.guard.ts) | Extends `AuthGuard('jwt')`, overriding `getRequest` to pull from the GraphQL context. Applied at the class level to every business resolver. |
 | [`JwtStrategy.validate(payload)`](net-api/src/auth/strategies/jwt.strategy.ts) | Returns `{ user_id: payload.sub }` for the `@CurrentUser` decorator. |
-| [`@CurrentUser(key)`](net-api/src/auth/current/current-user.decorator.ts) | Parameter decorator that injects `req.user[key]` — every resolver uses `@CurrentUser('user_id')`. |
+| [`@CurrentUser(key)`](net-api/src/auth/current/current-user.decorator.ts) | Parameter decorator that injects `req.user[key]` where every resolver uses `@CurrentUser('user_id')`. |
 
 ### Frontend Hooks
 
-All in [`app/src/stores/hooks/`](app/src/stores/hooks/) — thin wrappers around the Redux slices.
+All in [`app/src/stores/hooks/`](app/src/stores/hooks/) thin wrappers around the Redux slices.
 
 #### [`useAuth`](app/src/stores/hooks/useAuth.js)
 
