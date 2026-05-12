@@ -26,7 +26,7 @@ export const getAccount = (id) =>
                 ${ACCOUNT_FIELDS}
             }
         }`,
-        { variables: { id }, dataPath: 'account' },
+        { variables: { id: Number(id) }, dataPath: 'account' },
     );
 
 export const saveAccount = async (data, id) => {
@@ -39,7 +39,7 @@ export const saveAccount = async (data, id) => {
             }`,
             {
                 variables: {
-                    id,
+                    id: Number(id),
                     input: {
                         account_name: data.account_name,
                         account_type: data.account_type,
@@ -74,5 +74,5 @@ export const deleteAccount = (id) =>
         `mutation RemoveAccount($id: Int!) {
             removeAccount(id: $id) { success }
         }`,
-        { variables: { id }, dataPath: 'removeAccount' },
+        { variables: { id: Number(id) }, dataPath: 'removeAccount' },
     );

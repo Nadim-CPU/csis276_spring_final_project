@@ -14,7 +14,7 @@ const EXPENSE_FIELDS = `
     account { account_id account_name }
 `;
 
-export const getExpenses = (user_id) =>
+export const getExpenses = () =>
     requestGraphql(
         `query Expenses {
             expenses { ${EXPENSE_FIELDS} }
@@ -38,7 +38,7 @@ export const saveExpense = async (data, id) => {
             }`,
             {
                 variables: {
-                    id,
+                    id: Number(id),
                     input: {
                         expense_amount: Number(data.expense_amount),
                         expense_source: data.expense_source,

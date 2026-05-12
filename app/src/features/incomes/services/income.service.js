@@ -39,7 +39,7 @@ export const saveIncome = async (data, id) => {
             }`,
             {
                 variables: {
-                    id,
+                    id: Number(id),
                     input: {
                         income_amount: Number(data.income_amount),
                         income_source: data.income_source,

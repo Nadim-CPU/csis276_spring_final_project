@@ -33,13 +33,13 @@ export class ExpenseService {
         });
     }
 
-    async getExpense(user_id: number, id: number) {
+    async getExpense(user_id: number, expense_id: number) {
         const expense = await this.expenseRepository.findOneBy({ 
-            expense_id: id,
-            user_expense_id: user_id
+            expense_id,
+            user_expense_id: user_id,
          });
         if (!expense) {
-            throw new NotFoundException(`Expense ID ${id} is non-existent!`);
+            throw new NotFoundException(`Expense ID ${expense_id} is non-existent!`);
         }
         return expense;
     }
@@ -63,11 +63,11 @@ export class ExpenseService {
     }
 
     async update(user_id: number, id: number, input: UpdateExpenseInput) {
-        const oldExpense = await this.getExpense(id, user_id);
-
+        const oldExpense = await this.getExpense(user_id, id);
+        
         await this.expenseRepository.update({ expense_id: id, user_expense_id: user_id}, input);
 
-        const updatedExpense = await this.getExpense(id, user_id);
+        const updatedExpense = await this.getExpense(user_id, id);
 
         // Removes previous amount affecting account to prevent stacking
         await this.accountService.adjustBalance(

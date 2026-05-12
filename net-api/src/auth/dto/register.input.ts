@@ -1,11 +1,5 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
-import {
-    ArrayMaxSize,
-    ArrayMinSize,
-    IsArray,
-    IsDateString,
-    IsEmail,
-    IsNotEmpty,
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsDateString, IsEmail, IsNotEmpty,
     IsNumber,
     IsOptional,
     MinLength,

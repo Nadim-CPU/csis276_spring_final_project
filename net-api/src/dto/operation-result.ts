@@ -6,5 +6,5 @@ export class OperationResult {
     success!: boolean;
 
     @Field(() => String, { nullable: true })
-    message?: string | null;
+    message?: string;
 }
