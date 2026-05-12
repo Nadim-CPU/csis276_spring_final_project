@@ -23,12 +23,6 @@ type OperationResult {
   message: String
 }
 
-type AuthPayload {
-  authenticated: Boolean!
-  user: User!
-  access_token: String!
-}
-
 type Category {
   category_id: Int!
   user_category_id: Int!
@@ -58,6 +52,12 @@ type Income {
   account_income_id: Int!
   category: Category!
   account: Account!
+}
+
+type AuthPayload {
+  authenticated: Boolean!
+  user: User!
+  access_token: String!
 }
 
 type Query {

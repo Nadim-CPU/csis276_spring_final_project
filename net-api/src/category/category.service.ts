@@ -1,7 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { SocketGateway } from '../socket/socket.gateway';
+import { Expense } from '../expense/expense.entity';
+import { Income } from '../income/income.entity';
 import { Category } from './category.entity';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
@@ -16,6 +18,10 @@ export class CategoryService {
     constructor(
         @InjectRepository(Category)
         private readonly categoryRepository: Repository<Category>,
+        @InjectRepository(Expense)
+        private readonly expenseRepository: Repository<Expense>,
+        @InjectRepository(Income)
+        private readonly incomeRepository: Repository<Income>,
         private readonly socketGateway: SocketGateway,
     ) {}
 
@@ -91,8 +97,29 @@ export class CategoryService {
         if (!current) {
             throw new NotFoundException(`Category ID ${id} is non-existent`);
         }
+
+        const hasExpenses = await this.expenseRepository.exists({
+            where: {
+                category_expense_id: id,
+                user_expense_id: user_id,
+            },
+        });
+
+        const hasIncomes = await this.incomeRepository.exists({
+            where: {
+                category_income_id: id,
+                user_income_id: user_id,
+            },
+        });
+
+        if (hasExpenses || hasIncomes) {
+            throw new BadRequestException(
+                'Failed to delete category. An expense(s) or income(s) is using this category.'
+            );
+        }
+
         await this.categoryRepository.delete(id);
-        
+
         this.socketGateway.broadcast('category.changed', { user_id });
     }
 }

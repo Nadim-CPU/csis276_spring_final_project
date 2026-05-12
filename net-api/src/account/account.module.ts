@@ -5,9 +5,11 @@ import { User } from '../user/user.entity';
 import { Account } from './account.entity';
 import { AccountResolver } from './account.resolver';
 import { AccountService } from './account.service';
+import { Expense } from '../expense/expense.entity';
+import { Income } from '../income/income.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Account, User]), SocketModule],
+    imports: [TypeOrmModule.forFeature([Account, User, Income, Expense]), SocketModule],
     providers: [AccountService, AccountResolver],
     exports: [AccountService, TypeOrmModule],
 })

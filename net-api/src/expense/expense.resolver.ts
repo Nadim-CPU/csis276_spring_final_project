@@ -20,7 +20,7 @@ export class ExpenseResolver {
 
     @Query(() => Expense, { name: 'expense' })
     getExpense(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
-        return this.expenseService.getExpense(id, user);
+        return this.expenseService.getExpense(user, id);
     }
 
     @Mutation(() => Expense)

@@ -49,7 +49,7 @@ export class IncomeService {
         await this.accountService.adjustBalance(input.account_income_id, input.income_amount);
 
         this.socketGateway.broadcast('income.changed', { user_id });
-        return saved;
+        return this.getIncome(user_id, saved.income_id);
     }
 
     async update(user_id: number, id: number, input: UpdateIncomeInput) {

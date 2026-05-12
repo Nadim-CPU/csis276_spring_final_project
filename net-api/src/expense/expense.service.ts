@@ -59,7 +59,7 @@ export class ExpenseService {
         await this.accountService.adjustBalance(input.account_expense_id, -input.expense_amount);
 
         this.socketGateway.broadcast('expense.changed', { user_id });
-        return saved;
+        return this.getExpense(user_id, saved.expense_id);
     }
 
     async update(user_id: number, id: number, input: UpdateExpenseInput) {
