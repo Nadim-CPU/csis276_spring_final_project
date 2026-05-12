@@ -38,7 +38,7 @@ export class AuthService {
             password_hash,
             face_descriptor: dto.face_descriptor ?? null,
         });
-        return this.userRepository.save(user);
+        return await this.userRepository.save(user);
     }
 
     async login(dto: LoginInput) {

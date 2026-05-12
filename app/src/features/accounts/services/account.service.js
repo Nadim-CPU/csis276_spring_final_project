@@ -1,28 +1,29 @@
 import { requestGraphql } from '../../../services/api';
 
-export const getAccounts = (user_id) =>
+// Both getters can be DRY'd
+const ACCOUNT_FIELDS = `
+    account_id
+    user_account_id
+    account_name
+    account_type
+    account_balance
+`;
+
+export const getAccounts = () =>
     requestGraphql(
-        `query Accounts($userId: Int!) {
-            accounts(user_id: $userId) {
-                account_id
-                user_account_id
-                account_name
-                account_type
-                account_balance
+        `query Accounts {
+            accounts {
+                ${ACCOUNT_FIELDS}
             }
         }`,
-        { variables: { userId: user_id }, dataPath: 'accounts' },
+        { dataPath: 'accounts' },
     );
 
 export const getAccount = (id) =>
     requestGraphql(
         `query Account($id: Int!) {
             account(id: $id) {
-                account_id
-                user_account_id
-                account_name
-                account_type
-                account_balance
+                ${ACCOUNT_FIELDS}
             }
         }`,
         { variables: { id }, dataPath: 'account' },
@@ -58,7 +59,6 @@ export const saveAccount = async (data, id) => {
         {
             variables: {
                 input: {
-                    user_id: Number(data.user_id),
                     account_name: data.account_name,
                     account_type: data.account_type,
                     account_balance: Number(data.account_balance),

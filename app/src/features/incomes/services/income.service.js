@@ -13,20 +13,22 @@ const INCOME_FIELDS = `
     account { account_id account_name }
 `;
 
-export const getIncomes = (user_id) =>
+export const getIncomes = () =>
     requestGraphql(
-        `query Incomes($userId: Int!) {
-            incomes(user_id: $userId) { ${INCOME_FIELDS} }
+        `query Incomes {
+            incomes { ${INCOME_FIELDS} }
         }`,
-        { variables: { userId: user_id }, dataPath: 'incomes' },
+        { dataPath: 'incomes' },
     );
 
 export const getIncome = (id) =>
     requestGraphql(
         `query Income($id: Int!) {
-            income(id: $id) { ${INCOME_FIELDS} }
+            income(id: $id) { 
+            ${INCOME_FIELDS}
+            }
         }`,
-        { variables: { id }, dataPath: 'income' },
+        { variables: { id: Number(id) }, dataPath: 'income' },
     );
 
 export const saveIncome = async (data, id) => {
@@ -52,12 +54,13 @@ export const saveIncome = async (data, id) => {
     }
     return requestGraphql(
         `mutation CreateIncome($input: CreateIncomeInput!) {
-            createIncome(input: $input) { income_id }
+            createIncome(input: $input) { 
+            income_id
+            }
         }`,
         {
             variables: {
                 input: {
-                    user_id: Number(data.user_id),
                     income_amount: Number(data.income_amount),
                     income_source: data.income_source,
                     income_date: data.income_date,
@@ -75,5 +78,5 @@ export const deleteIncome = (id) =>
         `mutation RemoveIncome($id: Int!) {
             removeIncome(id: $id) { success }
         }`,
-        { variables: { id }, dataPath: 'removeIncome' },
+        { variables: { id: Number(id) }, dataPath: 'removeIncome' },
     );

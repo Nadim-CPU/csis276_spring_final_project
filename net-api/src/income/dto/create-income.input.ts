@@ -3,9 +3,6 @@ import { IsDateString, IsInt, IsNotEmpty, IsNumber } from 'class-validator';
 
 @InputType()
 export class CreateIncomeInput {
-    @Field(() => Int)
-    @IsInt()
-    user_id!: number;
 
     @Field(() => Float)
     @IsNumber({}, { message: 'error with income amount!' })

@@ -6,6 +6,7 @@ import { CreateExpenseInput } from './dto/create-expense.input';
 import { UpdateExpenseInput } from './dto/update-expense.input';
 import { Expense } from './expense.entity';
 import { ExpenseService } from './expense.service';
+import { CurrentUser } from '../auth/current/current-user.decorator';
 
 @Resolver(() => Expense)
 @UseGuards(GqlAuthGuard)
@@ -13,31 +14,32 @@ export class ExpenseResolver {
     constructor(private readonly expenseService: ExpenseService) {}
 
     @Query(() => [Expense], { name: 'expenses' })
-    getExpenses(@Args('user_id', { type: () => Int }) user_id: number) {
-        return this.expenseService.getExpenses(user_id);
+    getExpenses(@CurrentUser('user_id') user: number) {
+        return this.expenseService.getExpenses(user);
     }
 
     @Query(() => Expense, { name: 'expense' })
-    getExpense(@Args('id', { type: () => Int }) id: number) {
-        return this.expenseService.getExpense(id);
+    getExpense(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
+        return this.expenseService.getExpense(id, user);
     }
 
     @Mutation(() => Expense)
-    createExpense(@Args('input') input: CreateExpenseInput) {
-        return this.expenseService.create(input);
+    createExpense(@CurrentUser('user_id') user: number, @Args('input') input: CreateExpenseInput) {
+        return this.expenseService.create(user, input);
     }
 
     @Mutation(() => Expense)
     updateExpense(
+        @CurrentUser('user_id') user: number,
         @Args('id', { type: () => Int }) id: number,
         @Args('input') input: UpdateExpenseInput,
     ) {
-        return this.expenseService.update(id, input);
+        return this.expenseService.update(user, id, input);
     }
 
     @Mutation(() => OperationResult)
-    async removeExpense(@Args('id', { type: () => Int }) id: number) {
-        await this.expenseService.remove(id);
+    async removeExpense(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
+        await this.expenseService.remove(user, id);
         return { success: true };
     }
 }

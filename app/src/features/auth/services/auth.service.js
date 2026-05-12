@@ -1,5 +1,14 @@
 import { requestGraphql } from '../../../services/api';
 
+// Both Login and LoginWithFace can be DRY'd
+const USER_FIELDS = `
+    user_id
+    user_first_name
+    user_last_name
+    user_email
+    user_dob
+`;
+
 export const login = ({ user_email, password }) => {
     return requestGraphql(
         `mutation Login($input: LoginInput!) {
@@ -7,11 +16,7 @@ export const login = ({ user_email, password }) => {
                 authenticated
                 access_token
                 user {
-                    user_id
-                    user_first_name
-                    user_last_name
-                    user_email
-                    user_dob
+                    ${USER_FIELDS}
                 }
             }
         }`,
@@ -30,11 +35,7 @@ export const loginWithFace = ({ user_email, descriptor }) => {
                 authenticated
                 access_token
                 user {
-                    user_id
-                    user_first_name
-                    user_last_name
-                    user_email
-                    user_dob
+                    ${USER_FIELDS}
                 }
             }
         }`,

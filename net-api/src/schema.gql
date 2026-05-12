@@ -61,23 +61,23 @@ type Income {
 }
 
 type Query {
-  users: [User!]!
-  user(id: Int!): User!
-  accounts(user_id: Int!): [Account!]!
+  me: User!
+  accounts: [Account!]!
   account(id: Int!): Account!
-  categories(user_id: Int!): [Category!]!
+  categories: [Category!]!
   category(id: Int!): Category!
-  expenses(user_id: Int!): [Expense!]!
+  expenses: [Expense!]!
   expense(id: Int!): Expense!
-  incomes(user_id: Int!): [Income!]!
+  incomes: [Income!]!
   income(id: Int!): Income!
 }
 
 type Mutation {
-  updateUser(id: Int!, input: UpdateUserInput!): User!
-  removeUser(id: Int!): OperationResult!
+  updateUser(input: UpdateUserInput!): User!
+  removeUser: OperationResult!
   register(input: RegisterInput!): User!
   login(input: LoginInput!): AuthPayload!
+  loginWithFace(input: LoginWithFaceInput!): AuthPayload!
   createAccount(input: CreateAccountInput!): Account!
   updateAccount(id: Int!, input: UpdateAccountInput!): Account!
   removeAccount(id: Int!): OperationResult!
@@ -104,6 +104,7 @@ input RegisterInput {
   user_email: String!
   password: String!
   user_dob: String!
+  face_descriptor: [Float!]
 }
 
 input LoginInput {
@@ -111,8 +112,12 @@ input LoginInput {
   password: String!
 }
 
+input LoginWithFaceInput {
+  user_email: String!
+  descriptor: [Float!]!
+}
+
 input CreateAccountInput {
-  user_id: Int!
   account_name: String!
   account_type: String!
   account_balance: Int!
@@ -125,7 +130,6 @@ input UpdateAccountInput {
 }
 
 input CreateCategoryInput {
-  user_id: Int!
   category_name: String!
   type: Boolean!
 }
@@ -135,7 +139,6 @@ input UpdateCategoryInput {
 }
 
 input CreateExpenseInput {
-  user_id: Int!
   expense_amount: Int!
   expense_source: String!
   expense_date: String!
@@ -152,7 +155,6 @@ input UpdateExpenseInput {
 }
 
 input CreateIncomeInput {
-  user_id: Int!
   income_amount: Float!
   income_source: String!
   income_date: String!

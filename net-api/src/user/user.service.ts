@@ -11,14 +11,10 @@ export class UserService {
         private readonly userRepository: Repository<User>,
     ) {}
 
-    findAll() {
-        return this.userRepository.find({ order: { user_id: 'ASC' } });
-    }
-
-    async findOne(id: number) {
-        const user = await this.userRepository.findOneBy({ user_id: id });
+    async findOne(user_id: number) {
+        const user = await this.userRepository.findOneBy({ user_id });
         if (!user) {
-            throw new NotFoundException(`User ${id} not found`);
+            throw new NotFoundException(`User ${user_id} not found`);
         }
         return user;
     }
@@ -27,18 +23,18 @@ export class UserService {
         return this.userRepository.findOneBy({ user_email: email });
     }
 
-    async update(id: number, input: UpdateUserInput) {
-        const result = await this.userRepository.update(id, input);
+    async update(user_id: number, input: UpdateUserInput) {
+        const result = await this.userRepository.update(user_id, input);
         if (result.affected === 0) {
-            throw new NotFoundException(`User ${id} not found`);
+            throw new NotFoundException(`User ${user_id} not found`);
         }
-        return this.findOne(id);
+        return this.findOne(user_id);
     }
 
-    async remove(id: number) {
-        const result = await this.userRepository.delete(id);
+    async remove(user_id: number) {
+        const result = await this.userRepository.delete(user_id);
         if (result.affected === 0) {
-            throw new NotFoundException(`User ${id} not found`);
+            throw new NotFoundException(`User ${user_id} not found`);
         }
     }
 }

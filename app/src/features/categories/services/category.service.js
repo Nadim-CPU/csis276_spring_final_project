@@ -1,29 +1,31 @@
 import { requestGraphql } from '../../../services/api';
 
-export const getCategories = (user_id) =>
+// Ensures DRY pattern
+
+const CATEGORY_FIELDS = `
+    category_id
+    user_category_id
+    category_name
+    type
+`
+export const getCategories = () =>
     requestGraphql(
-        `query Categories($userId: Int!) {
-            categories(user_id: $userId) {
-                category_id
-                user_category_id
-                category_name
-                type
+        `query Categories {
+            categories {
+                ${CATEGORY_FIELDS}
             }
         }`,
-        { variables: { userId: user_id }, dataPath: 'categories' },
+        {  dataPath: 'categories' },
     );
 
 export const getCategory = (id) =>
     requestGraphql(
         `query Category($id: Int!) {
             category(id: $id) {
-                category_id
-                user_category_id
-                category_name
-                type
+                ${CATEGORY_FIELDS}
             }
         }`,
-        { variables: { id }, dataPath: 'category' },
+        { variables: { id: Number(id) }, dataPath: 'category' },
     );
 
 export const saveCategory = async (data, id) => {
@@ -54,7 +56,6 @@ export const saveCategory = async (data, id) => {
         {
             variables: {
                 input: {
-                    user_id: Number(data.user_id),
                     category_name: data.category_name,
                     type: Boolean(data.type),
                 },
@@ -69,5 +70,5 @@ export const deleteCategory = (id) =>
         `mutation RemoveCategory($id: Int!) {
             removeCategory(id: $id) { success }
         }`,
-        { variables: { id }, dataPath: 'removeCategory' },
+        { variables: { id: Number(id) }, dataPath: 'removeCategory' },
     );

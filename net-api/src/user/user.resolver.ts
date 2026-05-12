@@ -5,33 +5,33 @@ import { OperationResult } from '../dto/operation-result';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import { CurrentUser } from 'src/auth/current/current-user.decorator';
 
+/*  -------------------------------------------
+*   |                USER RESOLVER            |
+*   -------------------------------------------
+*/
 @Resolver(() => User)
 @UseGuards(GqlAuthGuard)
 export class UserResolver {
     constructor(private readonly userService: UserService) {}
 
-    @Query(() => [User], { name: 'users' })
-    findAll() {
-        return this.userService.findAll();
-    }
-
-    @Query(() => User, { name: 'user' })
-    findOne(@Args('id', { type: () => Int }) id: number) {
-        return this.userService.findOne(id);
+    @Query(() => User, { name: 'me' })
+    findOne(@CurrentUser('user_id') user: number) {
+        return this.userService.findOne(user);
     }
 
     @Mutation(() => User)
     updateUser(
-        @Args('id', { type: () => Int }) id: number,
+        @CurrentUser('user_id') user: number,
         @Args('input') input: UpdateUserInput,
     ) {
-        return this.userService.update(id, input);
+        return this.userService.update(user, input);
     }
 
     @Mutation(() => OperationResult)
-    async removeUser(@Args('id', { type: () => Int }) id: number) {
-        await this.userService.remove(id);
+    async removeUser(@CurrentUser('user_id') user: number) {
+        await this.userService.remove(user);
         return { success: true };
     }
 }

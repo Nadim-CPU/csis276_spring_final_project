@@ -3,9 +3,6 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateAccountInput {
-    @Field(() => Int)
-    @IsInt()
-    user_id!: number;
 
     @Field()
     @IsNotEmpty({ message: 'error in account name' })

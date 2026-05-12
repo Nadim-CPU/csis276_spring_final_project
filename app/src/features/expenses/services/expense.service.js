@@ -16,10 +16,10 @@ const EXPENSE_FIELDS = `
 
 export const getExpenses = (user_id) =>
     requestGraphql(
-        `query Expenses($userId: Int!) {
-            expenses(user_id: $userId) { ${EXPENSE_FIELDS} }
+        `query Expenses {
+            expenses { ${EXPENSE_FIELDS} }
         }`,
-        { variables: { userId: user_id }, dataPath: 'expenses' },
+        { dataPath: 'expenses' },
     );
 
 export const getExpense = (id) =>
@@ -27,7 +27,7 @@ export const getExpense = (id) =>
         `query Expense($id: Int!) {
             expense(id: $id) { ${EXPENSE_FIELDS} }
         }`,
-        { variables: { id }, dataPath: 'expense' },
+        { variables: { id: Number(id) }, dataPath: 'expense' },
     );
 
 export const saveExpense = async (data, id) => {
@@ -58,7 +58,7 @@ export const saveExpense = async (data, id) => {
         {
             variables: {
                 input: {
-                    user_id: Number(data.user_id),
+                    
                     expense_amount: Number(data.expense_amount),
                     expense_source: data.expense_source,
                     expense_date: data.expense_date,
@@ -76,5 +76,5 @@ export const deleteExpense = (id) =>
         `mutation RemoveExpense($id: Int!) {
             removeExpense(id: $id) { success }
         }`,
-        { variables: { id }, dataPath: 'removeExpense' },
+        { variables: {id: Number(id) }, dataPath: 'removeExpense' },
     );

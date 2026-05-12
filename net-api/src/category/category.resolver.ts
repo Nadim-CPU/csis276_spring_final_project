@@ -6,38 +6,45 @@ import { Category } from './category.entity';
 import { CategoryService } from './category.service';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
+import { CurrentUser } from '../auth/current/current-user.decorator';
 
+/*  -------------------------------------------
+*   |            CATEGORY RESOLVER            |
+*   -------------------------------------------
+*/
 @Resolver(() => Category)
 @UseGuards(GqlAuthGuard)
 export class CategoryResolver {
     constructor(private readonly categoryService: CategoryService) {}
 
     @Query(() => [Category], { name: 'categories' })
-    getCategories(@Args('user_id', { type: () => Int }) user_id: number) {
-        return this.categoryService.getCategories(user_id);
+    async getCategories(@CurrentUser('user_id') user: number) {
+        console.log('User object from JWT: ', user);
+        return await this.categoryService.getCategories(user);
     }
 
     @Query(() => Category, { name: 'category' })
-    getCategory(@Args('id', { type: () => Int }) id: number) {
-        return this.categoryService.getCategory(id);
+    async getCategory(@Args('id', { type: () => Int }) id: number, @CurrentUser('user_id') user: number) {
+        return await this.categoryService.getCategory(id, user);
     }
 
     @Mutation(() => Category)
-    createCategory(@Args('input') input: CreateCategoryInput) {
-        return this.categoryService.create(input);
+    async createCategory(@CurrentUser('user_id') user: number, @Args('input') input: CreateCategoryInput) {
+        return await this.categoryService.create(input, user);
     }
 
     @Mutation(() => Category)
-    updateCategory(
+    async updateCategory(
         @Args('id', { type: () => Int }) id: number,
+        @CurrentUser('user_id') user: number,
         @Args('input') input: UpdateCategoryInput,
     ) {
-        return this.categoryService.update(id, input);
+        return await this.categoryService.update(id, input, user);
     }
 
     @Mutation(() => OperationResult)
-    async removeCategory(@Args('id', { type: () => Int }) id: number) {
-        await this.categoryService.remove(id);
+    async removeCategory(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
+        await this.categoryService.remove(id, user);
         return { success: true };
     }
 }

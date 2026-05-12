@@ -6,6 +6,7 @@ import { Account } from './account.entity';
 import { AccountService } from './account.service';
 import { CreateAccountInput } from './dto/create-account.input';
 import { UpdateAccountInput } from './dto/update-account.input';
+import { CurrentUser } from '../auth/current/current-user.decorator';
 
 /*  -------------------------------------------
 *   |             ACCOUNT RESOLVER            |
@@ -18,31 +19,32 @@ export class AccountResolver {
     constructor(private readonly accountService: AccountService) {}
 
     @Query(() => [Account], { name: 'accounts' })
-    getAccounts(@Args('user_id', { type: () => Int }) user_id: number) {
-        return this.accountService.getAccounts(user_id);
+    async getAccounts(@CurrentUser('user_id') user: number) {
+        return this.accountService.getAccounts(user);
     }
 
     @Query(() => Account, { name: 'account' })
-    getAccount(@Args('id', { type: () => Int }) id: number) {
-        return this.accountService.getAccount(id);
+    async getAccount(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
+        return this.accountService.getAccount(user, id);
     }
 
     @Mutation(() => Account)
-    createAccount(@Args('input') input: CreateAccountInput) {
-        return this.accountService.create(input);
+    async createAccount(@CurrentUser('user_id') user: number, @Args('input') input: CreateAccountInput) {
+        return this.accountService.create(user, input);
     }
 
     @Mutation(() => Account)
     updateAccount(
+        @CurrentUser('user_id') user: number,
         @Args('id', { type: () => Int }) id: number,
         @Args('input') input: UpdateAccountInput,
     ) {
-        return this.accountService.update(id, input);
+        return this.accountService.update(user, id, input);
     }
 
     @Mutation(() => OperationResult)
-    async removeAccount(@Args('id', { type: () => Int }) id: number) {
-        await this.accountService.remove(id);
+    async removeAccount(@CurrentUser('user_id') user: number, @Args('id', { type: () => Int }) id: number) {
+        await this.accountService.remove(user, id);
         return { success: true };
     }
 }
