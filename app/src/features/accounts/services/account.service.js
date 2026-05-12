@@ -34,7 +34,7 @@ export const saveAccount = async (data, id) => {
         return requestGraphql(
             `mutation UpdateAccount($id: Int!, $input: UpdateAccountInput!) {
                 updateAccount(id: $id, input: $input) {
-                    account_id
+                    ${ACCOUNT_FIELDS}
                 }
             }`,
             {
@@ -53,7 +53,7 @@ export const saveAccount = async (data, id) => {
     return requestGraphql(
         `mutation CreateAccount($input: CreateAccountInput!) {
             createAccount(input: $input) {
-                account_id
+                ${ACCOUNT_FIELDS}
             }
         }`,
         {

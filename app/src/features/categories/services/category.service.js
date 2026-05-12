@@ -33,12 +33,12 @@ export const saveCategory = async (data, id) => {
         return requestGraphql(
             `mutation UpdateCategory($id: Int!, $input: UpdateCategoryInput!) {
                 updateCategory(id: $id, input: $input) {
-                    category_id
+                    ${CATEGORY_FIELDS}
                 }
             }`,
             {
                 variables: {
-                    id,
+                    id: Number(id),
                     input: {
                         category_name: data.category_name,
                     },
@@ -50,7 +50,7 @@ export const saveCategory = async (data, id) => {
     return requestGraphql(
         `mutation CreateCategory($input: CreateCategoryInput!) {
             createCategory(input: $input) {
-                category_id
+                ${CATEGORY_FIELDS}
             }
         }`,
         {

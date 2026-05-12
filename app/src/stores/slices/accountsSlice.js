@@ -23,6 +23,12 @@ export const removeAccount = createAsyncThunk(
     },
 );
 
+const upsert = (items, saved) => {
+    const i = items.findIndex((a) => a.account_id === saved.account_id);
+    if (i >= 0) items[i] = { ...items[i], ...saved };
+    else items.push(saved);
+};
+
 const accountsSlice = createSlice({
     name: 'accounts',
     initialState: { items: [], loading: false, error: null },
@@ -45,8 +51,20 @@ const accountsSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
+            .addCase(createOrUpdateAccount.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createOrUpdateAccount.fulfilled, (state, action) => {
+                upsert(state.items, action.payload);
+                state.loading = false;
+            })
+            .addCase(createOrUpdateAccount.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
             .addCase(removeAccount.fulfilled, (state, action) => {
-                state.items = state.items.filter((account) => account.account_id !== action.payload);
+                state.items = state.items.filter((account) => account.account_id !== Number(action.payload));
             });
     },
 });

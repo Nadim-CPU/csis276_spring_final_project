@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Box, Button, Card, IconButton, Typography,
+    Alert, Box, Button, Card, IconButton, Snackbar, Typography,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from "@mui/material";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -15,13 +15,18 @@ const CategoryList = () => {
     const { user } = useAuth();
     const { items: categories, loadCategories, deleteCategory } = useCategories();
     const navigate = useNavigate();
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         loadCategories(user.user_id);
     }, [user, loadCategories]);
 
     const handleDelete = async (id) => {
-        await deleteCategory(id);
+        try {
+            await deleteCategory(id);
+        } catch (err) {
+            setErrorMsg(err?.message || "Failed to delete category.");
+        }
     }
 
     return (
@@ -88,6 +93,16 @@ const CategoryList = () => {
                     </Table>
                 </TableContainer>
             </Card>
+            <Snackbar
+                open={Boolean(errorMsg)}
+                autoHideDuration={5000}
+                onClose={() => setErrorMsg("")}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" variant="filled" onClose={() => setErrorMsg("")}>
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

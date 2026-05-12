@@ -35,7 +35,7 @@ export const saveIncome = async (data, id) => {
     if (id) {
         return requestGraphql(
             `mutation UpdateIncome($id: Int!, $input: UpdateIncomeInput!) {
-                updateIncome(id: $id, input: $input) { income_id }
+                updateIncome(id: $id, input: $input) { ${INCOME_FIELDS} }
             }`,
             {
                 variables: {
@@ -54,9 +54,7 @@ export const saveIncome = async (data, id) => {
     }
     return requestGraphql(
         `mutation CreateIncome($input: CreateIncomeInput!) {
-            createIncome(input: $input) { 
-            income_id
-            }
+            createIncome(input: $input) { ${INCOME_FIELDS} }
         }`,
         {
             variables: {

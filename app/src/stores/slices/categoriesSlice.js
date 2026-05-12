@@ -23,6 +23,12 @@ export const removeCategory = createAsyncThunk(
     },
 );
 
+const upsert = (items, saved) => {
+    const i = items.findIndex((c) => c.category_id === saved.category_id);
+    if (i >= 0) items[i] = { ...items[i], ...saved };
+    else items.push(saved);
+};
+
 const categoriesSlice = createSlice({
     name: 'categories',
     initialState: { items: [], loading: false, error: null },
@@ -45,8 +51,20 @@ const categoriesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
+            .addCase(createOrUpdateCategory.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createOrUpdateCategory.fulfilled, (state, action) => {
+                upsert(state.items, action.payload);
+                state.loading = false;
+            })
+            .addCase(createOrUpdateCategory.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
             .addCase(removeCategory.fulfilled, (state, action) => {
-                state.items = state.items.filter((category) => category.category_id !== action.payload);
+                state.items = state.items.filter((category) => category.category_id !== Number(action.payload));
             });
     },
 });

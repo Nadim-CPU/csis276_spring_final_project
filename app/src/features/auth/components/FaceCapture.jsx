@@ -116,7 +116,7 @@ const FaceCapture = ({ onCapture, captureLabel = 'Capture face' }) => {
                         }}
                     >
                         <CircularProgress size={32} sx={{ color: 'white' }} />
-                        <Typography variant="caption">Loading camera + models…</Typography>
+                        <Typography variant="caption">Loading camera & models…</Typography>
                     </Box>
                 )}
             </Box>

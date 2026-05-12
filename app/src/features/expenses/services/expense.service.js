@@ -34,7 +34,7 @@ export const saveExpense = async (data, id) => {
     if (id) {
         return requestGraphql(
             `mutation UpdateExpense($id: Int!, $input: UpdateExpenseInput!) {
-                updateExpense(id: $id, input: $input) { expense_id }
+                updateExpense(id: $id, input: $input) { ${EXPENSE_FIELDS} }
             }`,
             {
                 variables: {
@@ -53,7 +53,7 @@ export const saveExpense = async (data, id) => {
     }
     return requestGraphql(
         `mutation CreateExpense($input: CreateExpenseInput!) {
-            createExpense(input: $input) { expense_id }
+            createExpense(input: $input) { ${EXPENSE_FIELDS} }
         }`,
         {
             variables: {

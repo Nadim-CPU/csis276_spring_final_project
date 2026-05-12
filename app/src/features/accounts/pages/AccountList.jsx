@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-    Box, Button, Card, IconButton, Typography,
+    Alert, Box, Button, Card, IconButton, Snackbar, Typography,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -15,13 +15,18 @@ const AccountList = () => {
     const { user } = useAuth();
     const { items: accounts, loadAccounts, deleteAccount } = useAccounts();
     const navigate = useNavigate();
+    const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
         loadAccounts(user.user_id);
     }, [user, loadAccounts]);
 
     const handleDelete = async (id) => {
-        await deleteAccount(id);
+        try {
+            await deleteAccount(id);
+        } catch (err) {
+            setErrorMsg(err?.message || "Failed to delete account.");
+        }
     }
 
     return (
@@ -90,6 +95,16 @@ const AccountList = () => {
                     </Table>
                 </TableContainer>
             </Card>
+            <Snackbar
+                open={Boolean(errorMsg)}
+                autoHideDuration={5000}
+                onClose={() => setErrorMsg("")}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="error" variant="filled" onClose={() => setErrorMsg("")}>
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }

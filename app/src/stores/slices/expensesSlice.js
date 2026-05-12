@@ -23,6 +23,12 @@ export const removeExpense = createAsyncThunk(
     },
 );
 
+const upsert = (items, saved) => {
+    const i = items.findIndex((e) => e.expense_id === saved.expense_id);
+    if (i >= 0) items[i] = { ...items[i], ...saved };
+    else items.push(saved);
+};
+
 const expensesSlice = createSlice({
     name: 'expenses',
     initialState: { items: [], loading: false, error: null },
@@ -45,8 +51,20 @@ const expensesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
+            .addCase(createOrUpdateExpense.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createOrUpdateExpense.fulfilled, (state, action) => {
+                upsert(state.items, action.payload);
+                state.loading = false;
+            })
+            .addCase(createOrUpdateExpense.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
             .addCase(removeExpense.fulfilled, (state, action) => {
-                state.items = state.items.filter((expense) => expense.expense_id !== action.payload);
+                state.items = state.items.filter((expense) => expense.expense_id !== Number(action.payload));
             });
     },
 });
